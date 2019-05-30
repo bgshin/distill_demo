@@ -1,7 +1,14 @@
+# Introduction
+* Official Implementation of the paper, "The Pupil Has Become the Master: Teacher-Student Model-Based Word Embedding Distillation with Ensemble Learning", B. Shin, H. Yang, and J.D. Choi, IJCAI 2019.
+* Author: Bonggun Shin
 
 ## Download Data
 
+* Unzip [Data](https://drive.google.com/file/d/1YcefkdeaXHDlTHJcdmuT6u49EZjEcjR4/view?usp=sharing) into 'data' folder
+
 ```
+distill_demo/data/sentiment_analysis/*
+distill_demo/data/w2v/*
 ```
 
 ## Requirements
