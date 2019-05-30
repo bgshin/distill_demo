@@ -6,7 +6,6 @@ import os
 from sklearn.model_selection import train_test_split
 import gc
 import argparse
-import numpy as np
 from src.autoencoder import *
 from distill_datasets import get_embedding
 import sys
@@ -41,59 +40,46 @@ def run(x_trn, x_tst, gpu_num, encoding_dim, model_name, dataset_name):
 
     ktf.set_session(get_session())
 
-
-    # with Timer("load_all..."):
-    #     embedding, vocab = get_embedding(400, dataset_name=dataset_name)
-    #     max_features = len(vocab)
-    #
-    #     # (_, _), (_, _), (_, _), embedding, max_features = \
-    #     #     load_all(embedding_dims, maxlen, source=data_src)
-    #
-    #     x_trn, x_tst, y_trn, y_tst = train_test_split(embedding, embedding, test_size=0.3, random_state=42)
-    #
-    #     del (y_trn)
-    #     del (y_tst)
-    #     gc.collect()
-
-
-
+    model_directory = '../model_ae'
+    if not os.path.exists(model_directory):
+        os.makedirs(model_directory)
 
     with Timer("Build model..."):
         if model_name=='v':
             autoenc = Autoencoder(embedding_dims, encoding_dim)
-            filepath = '../model_ae/selu_vanila-%s-%d-%d' % (dataset_name, embedding_dims, encoding_dim)
+            filepath = '%s/selu_vanila-%s-%d-%d' % (model_directory, dataset_name, embedding_dims, encoding_dim)
 
         elif model_name=='d':
             autoenc = DeepAutoencoder([embedding_dims, 400, encoding_dim])
-            filepath = '../model_ae/selu_deep-%s-%d-%d' % (dataset_name, embedding_dims, encoding_dim)
+            filepath = '%s/selu_deep-%s-%d-%d' % (model_directory, dataset_name, embedding_dims, encoding_dim)
 
         elif model_name == 'vd':
             autoenc = DeepAutoencoder([embedding_dims, 2000, 400, encoding_dim])
-            filepath = '../model_ae/vdeep-new'
+            filepath = '%s/vdeep-new' % (model_directory)
 
         elif model_name == 'vd2':
             autoenc = DeepAutoencoder([embedding_dims, 400, 200, 100, encoding_dim])
-            filepath = '../model_ae/vdeep2-new'
+            filepath = '%s/vdeep2-new' % (model_directory)
 
         elif model_name == 'vd3':
             autoenc = DeepAutoencoder([embedding_dims, 5000, encoding_dim])
-            filepath = '../model_ae/vdeep3-new'
+            filepath = '%s/vdeep3-new' % (model_directory)
 
         elif model_name=='c':
             autoenc = ConvolutionalAutoencoder(20, 20, [(8, 3, 3), (2, 3, 3)])
-            filepath = '../model_ae/conv-new'
+            filepath = '%s/conv-new' % (model_directory)
 
         elif model_name=='r':
             autoenc = RelationalAutoencoder(100, 4, [100, 50], [50, 50])
-            filepath = '../model_ae/rel-new'
+            filepath = '%s/rel-new' % (model_directory)
 
         elif model_name=='rc':
             autoenc = RelationalEncoderConvolutionalDecoder(100, 4, [100, 50], [50, 50], [(8, 3, 3), (2, 3, 3)])
-            filepath = '../model_ae/relconv-new'
+            filepath = '%s/relconv-new' % (model_directory)
 
         elif model_name=='rd':
             autoenc = RelationalEncoderDeepDecoder(100, 4, [100, 50], [50, 50], [400, 100, 0])
-            filepath = '../model_ae/reldeep-new'
+            filepath = '%s/reldeep-new' % (model_directory)
 
         else:
             print('wrong model name (%s)' % model_name)
@@ -111,7 +97,7 @@ def run(x_trn, x_tst, gpu_num, encoding_dim, model_name, dataset_name):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-g', default="3", choices=["0", "1", "2", "3"], type=str)
+    parser.add_argument('-g', default="0", choices=["0", "1", "2", "3"], type=str)
     parser.add_argument('-d', default=50, choices=[50, 40, 30, 20, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1], type=int)
     parser.add_argument('-m', default="d", choices=["v", "d", "vd", "vd2", "vd3", "c", "r", "rc", "rd"], type=str)
     parser.add_argument('-emb', default="sst5", choices=["sst5", "news"], type=str)
@@ -133,6 +119,9 @@ if __name__ == "__main__":
             sys.stdout.flush()
 
             run(x_trn, x_tst, args.g, sdim, model_name, args.emb)
+
+
+
 
 
 
