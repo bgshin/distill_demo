@@ -104,5 +104,7 @@ venv.bak/
 .mypy_cache/
 .DS_Store
 data
+model
 model_ae
+model_distill_ba
 .idea
